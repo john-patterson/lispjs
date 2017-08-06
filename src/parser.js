@@ -34,8 +34,18 @@ Parser.prototype.parse = function(tokenStream) {
         while (positionInStream < tokenStream.length 
             && tokenStream[positionInStream].type !== TokenType.RBRACE) {
 
-            tokenCollection.push(tokenStream[positionInStream]);
-            positionInStream++;
+            let item = tokenStream[positionInStream];
+            if (item.type === TokenType.INT || item.type === TokenType.INDENTIFIER) {
+                tokenCollection.push(tokenStream[positionInStream]);
+                positionInStream++;
+            } else if (item.type === TokenType.LBRACE) {
+                let newPos = positionInStream + 1;
+                while (tokenStream[newPos].type !== TokenType.RBRACE)
+                    newPos += 1;
+                let node = this.parse(tokenStream.slice(positionInStream, newPos));
+                tokenCollection.push(node);
+                positionInStream++;
+            }
         }
 
         return nodes.list(tokenCollection);
