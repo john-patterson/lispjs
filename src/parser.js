@@ -24,7 +24,21 @@ let Parser = function() {
 };
 
 Parser.prototype.parse = function(tokenStream) {
-    return nodes.atom(tokenStream[0]);
+    if (tokenStream[0].type === TokenType.INT
+        || tokenStream[0].type === TokenType.INDENTIFIER) {
+
+        return nodes.atom(tokenStream[0]);
+    } else if (tokenStream[0].type === TokenType.LBRACE) {
+        let tokenCollection = [];
+        let positionInStream = 1;
+        while (positionInStream < tokenStream.length 
+            && tokenStream[positionInStream].type !== TokenType.RBRACE) {
+
+            tokenCollection.push(tokenStream[positionInStream]);
+        }
+
+        return nodes.list(tokenCollection);
+    }
 };
 
 module.exports = { nodes, NodeType, Parser };

@@ -24,5 +24,19 @@ describe('Atoms', () => {
         assert.equal(ast.value, '_ab')
         assert.deepEqual(ast.token, tokenStream[0]);
     });
+});
 
+
+describe('Lists', () => {
+    it('should parse empty list', () => {
+        let tokenStream = [ 
+            tokens.lbraceToken(),
+            tokens.rbraceToken()
+        ];
+        let parser = new Parser();
+        let ast = parser.parse(tokenStream);
+
+        assert.equal(ast.type, NodeType.LIST);
+        assert.deepEqual(ast.tokens, []);
+    });
 });
