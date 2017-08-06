@@ -42,13 +42,16 @@ Scanner.prototype.tokenize = function(source) {
         .split(' ');
     
     return spacedParens.map(item => {
+        const numberRegex = /^\d+$/;
+        const identifierRegex = /^[a-zA-Z\_][a-zA-Z\_\-0-9]*$/; 
+
         if (item === '(') {
             return tokens.lbraceToken();
         } else if (item === ')') {
             return tokens.rbraceToken();
-        } else if (/^\d+$/.test(item)) {
+        } else if (numberRegex.test(item)) {
             return tokens.intToken(parseInt(item));
-        } else if (/^[a-zA-Z\_][a-zA-Z\_\-0-9]*$/.test(item)) {
+        } else if (identifierRegex.test(item)) {
             return tokens.identifierToken(item);
         }
 
