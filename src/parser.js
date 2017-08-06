@@ -24,13 +24,7 @@ let Parser = function() {
 };
 
 Parser.prototype.parse = function(tokenStream) {
-    return integer(tokenStream[0]);
-};
-
-let integer = (token) => {
-    if (token.type === TokenType.INT) {
-        return nodes.atom(token);
-    }
+    return nodes.atom(tokenStream[0]);
 };
 
 module.exports = { nodes, NodeType, Parser };

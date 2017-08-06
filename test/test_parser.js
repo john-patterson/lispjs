@@ -14,4 +14,15 @@ describe('Atoms', () => {
         assert.deepEqual(ast.token, tokenStream[0]);
     });
 
+    it('should parse identifier', () => {
+        let tokenStream = [ tokens.identifierToken('_ab') ];
+        let parser = new Parser();
+        let ast = parser.parse(tokenStream);
+
+        assert.equal(ast.type, NodeType.ATOM);
+        assert.equal(ast.isInt, false);
+        assert.equal(ast.value, '_ab')
+        assert.deepEqual(ast.token, tokenStream[0]);
+    });
+
 });
