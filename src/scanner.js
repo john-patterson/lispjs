@@ -1,7 +1,8 @@
 const TokenType = {
     INT: 'INT',
     LBRACE: 'LBRACE',
-    RBRACE: 'RBRACE'
+    RBRACE: 'RBRACE',
+    INDENTIFIER: 'IDENTIFIER'
 };
 
 const tokens = {
@@ -16,6 +17,11 @@ const tokens = {
 
     rbraceToken: () => ({
         type: TokenType.RBRACE
+    }),
+
+    identifierToken: (raw) => ({
+        type: TokenType.INDENTIFIER,
+        value: raw
     })
 };
 
@@ -42,6 +48,8 @@ Scanner.prototype.tokenize = function(source) {
             return tokens.rbraceToken();
         } else if (/^\d+$/.test(item)) {
             return tokens.intToken(parseInt(item));
+        } else if (/^[a-zA-Z\_][a-zA-Z\_\-0-9]*$/.test(item)) {
+            return tokens.identifierToken(item);
         }
 
         throw new UnknownSourceCharacterError(`Found unknown item: ${item}`);
