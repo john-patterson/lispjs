@@ -36,7 +36,7 @@ Parser.prototype.parse = function(tokenStream) {
 
             let item = tokenStream[positionInStream];
             if (item.type === TokenType.INT || item.type === TokenType.INDENTIFIER) {
-                tokenCollection.push(tokenStream[positionInStream]);
+                tokenCollection.push(nodes.atom(tokenStream[positionInStream]));
                 positionInStream++;
             } else if (item.type === TokenType.LBRACE) {
                 let newPos = positionInStream + 1;
