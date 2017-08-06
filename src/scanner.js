@@ -19,16 +19,39 @@ const tokens = {
     })
 };
 
+let UnknownSourceCharacterError = function(message) {
+    this.name = 'UnknownSourceCharacterError';
+    this.message = message || '';
+}
+
+UnknownSourceCharacterError.prototype = Error.prototype;
+
 let Scanner = function() {
 };
 
 Scanner.prototype.tokenize = function(source) {
-    return [];
+    let spacedParens = source
+        .replace('(', '( ')
+        .replace(')', ' )')
+        .split(' ');
+    
+    return spacedParens.map(item => {
+        if (item === '(') {
+            return tokens.lbraceToken();
+        } else if (item === ')') {
+            return tokens.rbraceToken();
+        } else if (/^\d+$/.test(item)) {
+            return tokens.intToken(parseInt(item));
+        }
+
+        throw new UnknownSourceCharacterError(`Found unknown item: ${item}`);
+    });
 };
 
 
 module.exports = {
     TokenType,
     tokens,
-    Scanner
+    Scanner,
+    UnknownSourceCharacterError
 };

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { Scanner, tokens, TokenType } = require('../src/scanner');
+const { Scanner, tokens, TokenType, UnknownSourceCharacterError } = require('../src/scanner');
 
 let runTest = (input, expectedTokenStream) => {
     return () => {
@@ -29,4 +29,12 @@ describe('Simple numbers', () => {
         tokens.intToken(3),
         tokens.rbraceToken()
     ]));
+
+    it('should throw on non-int in list', () => {
+        assert.throws(runTest('(1 a 3)', []), UnknownSourceCharacterError);
+    });
+
+    it('should throw on mixed-int in list', () => {
+        assert.throws(runTest('(1a 2 3)', []), UnknownSourceCharacterError);
+    });
 });
