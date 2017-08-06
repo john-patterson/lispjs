@@ -2,113 +2,97 @@ const { TokenType, tokens } = require('../src/scanner');
 const { NodeType, nodes, Parser } = require('../src/parser');
 const assert = require('assert');
 
+let testAST = (tokenStream, expectedAST) => {
+    let actualAST = (new Parser()).parse(tokenStream);
+    assert.equal(JSON.stringify(actualAST),
+        JSON.stringify(expectedAST));
+};
+
+let intTokens = [
+    tokens.intToken(1),
+    tokens.intToken(2),
+    tokens.intToken(3),
+];
+
+let intNodes = intTokens
+    .map(token => nodes.atom(token));
+
+let identifierTokens = [
+    tokens.identifierToken('_ab'),
+    tokens.identifierToken('c-d'),
+    tokens.identifierToken('e'),
+];
+
+let identifierNodes = identifierTokens
+    .map(token => nodes.atom(token));
+
+let lbrace = tokens.lbraceToken();
+let rbrace = tokens.rbraceToken();
+
+
 describe('Atoms', () => {
     it('should parse standalone integer', () => {
-        let tokenStream = [ tokens.intToken(1) ];
-        let parser = new Parser();
-        let ast = parser.parse(tokenStream);
-
-        assert.equal(ast.type, NodeType.ATOM);
-        assert.equal(ast.isInt, true);
-        assert.equal(ast.value, 1)
-        assert.deepEqual(ast.token, tokenStream[0]);
+        let tokenStream = [ intTokens[0] ];
+        let expectedAST = intNodes[0];
+        testAST(tokenStream, expectedAST);
     });
 
     it('should parse identifier', () => {
-        let tokenStream = [ tokens.identifierToken('_ab') ];
-        let parser = new Parser();
-        let ast = parser.parse(tokenStream);
-
-        assert.equal(ast.type, NodeType.ATOM);
-        assert.equal(ast.isInt, false);
-        assert.equal(ast.value, '_ab')
-        assert.deepEqual(ast.token, tokenStream[0]);
+        let tokenStream = [ identifierTokens[0] ];
+        let expectedAST = identifierNodes[0];
+        testAST(tokenStream, expectedAST);
     });
 });
 
 
 describe('Lists', () => {
     it('should parse empty list', () => {
-        let tokenStream = [ 
-            tokens.lbraceToken(),
-            tokens.rbraceToken()
-        ];
-        let parser = new Parser();
-        let ast = parser.parse(tokenStream);
-
-        assert.equal(ast.type, NodeType.LIST);
-        assert.deepEqual(ast.nodes, []);
+        let tokenStream = [ lbrace, rbrace ];
+        let expectedAST = nodes.list([]);
+        testAST(tokenStream, expectedAST);
     });
 
     it('should parse list of numbers', () => {
-        let tokenStream = [ 
-            tokens.lbraceToken(),
-            tokens.intToken(1),
-            tokens.intToken(2),
-            tokens.intToken(3),
-            tokens.rbraceToken()
-        ];
-        let parser = new Parser();
-        let ast = parser.parse(tokenStream);
-
-        assert.equal(ast.type, NodeType.LIST);
-        assert.deepEqual(ast.nodes, [
-            nodes.atom(tokenStream[1]),
-            nodes.atom(tokenStream[2]),
-            nodes.atom(tokenStream[3]),
-        ]);
+        let tokenStream = [lbrace]
+            .concat(intTokens)
+            .concat([rbrace]);
+        let expectedAST = nodes.list(intNodes);
+        testAST(tokenStream, expectedAST);
     });
 
     it('should parse list of identifiers', () => {
-        let tokenStream = [ 
-            tokens.lbraceToken(),
-            tokens.identifierToken('_ab'),
-            tokens.identifierToken('c-d'),
-            tokens.identifierToken('e'),
-            tokens.rbraceToken()
-        ];
-        let parser = new Parser();
-        let ast = parser.parse(tokenStream);
-
-        assert.equal(ast.type, NodeType.LIST);
-        assert.deepEqual(ast.nodes, [
-            nodes.atom(tokenStream[1]),
-            nodes.atom(tokenStream[2]),
-            nodes.atom(tokenStream[3]),
-        ]);
+        let tokenStream = [lbrace]
+            .concat(identifierTokens)
+            .concat([rbrace]);
+        let expectedAST = nodes.list(identifierNodes);
+        testAST(tokenStream, expectedAST);
     });
 
     it('should parse nested empty list', () => {
-        let tokenStream = [ 
-            tokens.lbraceToken(),
-            tokens.lbraceToken(),
-            tokens.rbraceToken(),
-            tokens.rbraceToken()
+        let tokenStream = [
+            lbrace,
+                lbrace, rbrace,
+            rbrace,
         ];
-
-        let parser = new Parser();
-        let ast = parser.parse(tokenStream);
-
-        assert.equal(ast.type, NodeType.LIST);
-        assert.equal(ast.nodes[0].type, NodeType.LIST);
+        let expectedAST = nodes.list([
+            nodes.list([])
+        ]);
+        testAST(tokenStream, expectedAST);
     });
 
     it('should parse doubly nested empty list', () => {
-        let tokenStream = [ 
-            tokens.lbraceToken(),
-            tokens.lbraceToken(),
-            tokens.lbraceToken(),
-            tokens.rbraceToken(),
-            tokens.rbraceToken(),
-            tokens.rbraceToken()
+        let tokenStream = [
+            lbrace,
+                lbrace,
+                    lbrace, rbrace,
+                rbrace,
+            rbrace,
         ];
-
-        let parser = new Parser();
-        let ast = parser.parse(tokenStream);
-
-        assert.equal(ast.type, NodeType.LIST);
-        assert.equal(ast.nodes[0].type, NodeType.LIST);
-        assert.equal(ast.nodes[0].nodes[0].type, NodeType.LIST);
-        assert.deepEqual(ast.nodes[0].nodes[0].nodes, []);
+        let expectedAST = nodes.list([
+            nodes.list([
+                nodes.list([])
+            ])
+        ]);
+        testAST(tokenStream, expectedAST);
     });
 });
