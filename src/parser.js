@@ -14,8 +14,8 @@ const nodes = {
         type: NodeType.ATOM
     }),
 
-    list: (tokens) => ({
-        tokens: tokens,
+    list: (nodes) => ({
+        nodes,
         type: NodeType.LIST
     })
 };

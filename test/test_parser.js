@@ -37,7 +37,7 @@ describe('Lists', () => {
         let ast = parser.parse(tokenStream);
 
         assert.equal(ast.type, NodeType.LIST);
-        assert.deepEqual(ast.tokens, []);
+        assert.deepEqual(ast.nodes, []);
     });
 
     it('should parse list of numbers', () => {
@@ -52,10 +52,10 @@ describe('Lists', () => {
         let ast = parser.parse(tokenStream);
 
         assert.equal(ast.type, NodeType.LIST);
-        assert.deepEqual(ast.tokens, [
-            tokenStream[1],
-            tokenStream[2],
-            tokenStream[3]
+        assert.deepEqual(ast.nodes, [
+            nodes.atom(tokenStream[1]),
+            nodes.atom(tokenStream[2]),
+            nodes.atom(tokenStream[3]),
         ]);
     });
 
@@ -71,10 +71,10 @@ describe('Lists', () => {
         let ast = parser.parse(tokenStream);
 
         assert.equal(ast.type, NodeType.LIST);
-        assert.deepEqual(ast.tokens, [
-            tokenStream[1],
-            tokenStream[2],
-            tokenStream[3]
+        assert.deepEqual(ast.nodes, [
+            nodes.atom(tokenStream[1]),
+            nodes.atom(tokenStream[2]),
+            nodes.atom(tokenStream[3]),
         ]);
     });
 
@@ -90,6 +90,6 @@ describe('Lists', () => {
         let ast = parser.parse(tokenStream);
 
         assert.equal(ast.type, NodeType.LIST);
-        assert.equal(ast.tokens[0].type, NodeType.LIST);
+        assert.equal(ast.nodes[0].type, NodeType.LIST);
     });
 });
