@@ -23,32 +23,51 @@ const nodes = {
 let Parser = function() {
 };
 
-Parser.prototype.parse = function(tokenStream) {
-    if (tokenStream[0].type === TokenType.INT
-        || tokenStream[0].type === TokenType.INDENTIFIER) {
+let isAtomToken = (token) => {
+    return token.type === TokenType.INT || token.type === TokenType.INDENTIFIER;
+};
 
+Parser.prototype.parse = function(tokenStream) {
+    let endOfStream = tokenStream.length;
+
+    if (isAtomToken(tokenStream[0])) {
         return nodes.atom(tokenStream[0]);
     } else if (tokenStream[0].type === TokenType.LBRACE) {
-        let tokenCollection = [];
+        let nodeCollection = [];
         let positionInStream = 1;
+        let sliceOutSublist = (currentPos) => {
+            if (currentPos < endOfStream) {
+                let openParensSeen = 0;
+                let finalPos = currentPos;
+
+                do {
+                    let itemType = tokenStream[finalPos].type;
+                    if (itemType === TokenType.LBRACE) {
+                        openParensSeen += 1;
+                    } else if (itemType === TokenType.RBRACE) {
+                        openParensSeen -= 1;
+                    }
+                    finalPos += 1;
+                } while (openParensSeen != 0);
+
+                return tokenStream.slice(currentPos, finalPos + 1);
+            }
+
+            throw new Error('you messed up your program, dummy');
+        };
+
         while (positionInStream < tokenStream.length 
             && tokenStream[positionInStream].type !== TokenType.RBRACE) {
 
             let item = tokenStream[positionInStream];
-            if (item.type === TokenType.INT || item.type === TokenType.INDENTIFIER) {
-                tokenCollection.push(nodes.atom(tokenStream[positionInStream]));
-                positionInStream++;
-            } else if (item.type === TokenType.LBRACE) {
-                let newPos = positionInStream + 1;
-                while (tokenStream[newPos].type !== TokenType.RBRACE)
-                    newPos += 1;
-                let node = this.parse(tokenStream.slice(positionInStream, newPos));
-                tokenCollection.push(node);
-                positionInStream++;
-            }
+            let node = isAtomToken(item)
+                ? nodes.atom(item)
+                : this.parse(sliceOutSublist(positionInStream));
+            nodeCollection.push(node);
+            positionInStream += 1;
         }
 
-        return nodes.list(tokenCollection);
+        return nodes.list(nodeCollection);
     }
 };
 
