@@ -35,6 +35,7 @@ Parser.prototype.parse = function(tokenStream) {
             && tokenStream[positionInStream].type !== TokenType.RBRACE) {
 
             tokenCollection.push(tokenStream[positionInStream]);
+            positionInStream++;
         }
 
         return nodes.list(tokenCollection);
