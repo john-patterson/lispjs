@@ -92,4 +92,23 @@ describe('Lists', () => {
         assert.equal(ast.type, NodeType.LIST);
         assert.equal(ast.nodes[0].type, NodeType.LIST);
     });
+
+    it('should parse doubly nested empty list', () => {
+        let tokenStream = [ 
+            tokens.lbraceToken(),
+            tokens.lbraceToken(),
+            tokens.lbraceToken(),
+            tokens.rbraceToken(),
+            tokens.rbraceToken(),
+            tokens.rbraceToken()
+        ];
+
+        let parser = new Parser();
+        let ast = parser.parse(tokenStream);
+
+        assert.equal(ast.type, NodeType.LIST);
+        assert.equal(ast.nodes[0].type, NodeType.LIST);
+        assert.equal(ast.nodes[0].nodes[0].type, NodeType.LIST);
+        assert.deepEqual(ast.nodes[0].nodes[0].nodes, []);
+    });
 });
