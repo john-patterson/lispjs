@@ -44,8 +44,6 @@ let LispFunction = function(interpreter, params, body, env) {
     _this.interpreter = interpreter;
 
     _this.invoke = (args) => {
-        console.log(`Args: '${JSON.stringify(args)}'`);
-        console.log(`Params: '${JSON.stringify(_this.params)}'`);
         let argsLength = args.length;
         let paramsLength = _this.params.length;
         if (argsLength != paramsLength) {
@@ -58,7 +56,6 @@ let LispFunction = function(interpreter, params, body, env) {
         }
 
         let newEnv = _this.env.extend(paramsBindings);
-        console.log(`BINDINGS:\n=======\n${JSON.stringify(newEnv)}`);
         return _this.interpreter.run(_this.body, newEnv);
     };
 
