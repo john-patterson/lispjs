@@ -17,7 +17,7 @@ const nodes = {
     list: (nodes) => ({
         nodes,
         type: NodeType.LIST
-    })
+    }),
 };
 
 let Parser = function() {
