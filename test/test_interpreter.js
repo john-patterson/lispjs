@@ -104,17 +104,29 @@ describe('Define', () => {
         let interpreter = new Interpreter();
         assert.throws(() => interpreter.run(ast, env));
     });
+});
 
-    it('should be able to define new function and invoke', () => {
+describe('Lambda', () => {
+    it.only('should invoke two arg function', () => {
         let ast = nodes.list([
-            nodes.atom(tokens.identifierToken('define')),
-            nodes.atom(tokens.identifierToken('foo')),
-            nodes.atom(tokens.identifierToken('moo'))
+            nodes.list([
+                nodes.atom(tokens.identifierToken('lambda')),
+                nodes.list([
+                    nodes.atom(tokens.identifierToken('a')),
+                    nodes.atom(tokens.identifierToken('b')),
+                ]),
+                nodes.list([
+                    nodes.atom(tokens.identifierToken('+')),
+                    nodes.atom(tokens.identifierToken('a')),
+                    nodes.atom(tokens.identifierToken('b'))
+                ])
+            ]),
+            nodes.atom(tokens.intToken(10)),
+            nodes.atom(tokens.intToken(25))
         ]);
         let env = Env.standard();
         let interpreter = new Interpreter();
-        assert.throws(() => interpreter.run(ast, env));
-
+        let result = interpreter.run(ast, env);
+        assert.equal(result, 35);
     });
-
-});
+})

@@ -1,4 +1,4 @@
-const { Env } = require('./env');
+const { Env, LispFunction } = require('./env');
 const { Parser, NodeType, nodes } = require('./parser');
 const { Scanner } = require('./scanner');
 
@@ -28,13 +28,25 @@ Interpreter.prototype.run = function(ast, env) {
             let binding = {};
             binding[symbolName] = value;
             env.update(binding);
+        } else if (functionName === 'lambda') { 
+            let params = ast.nodes[1]
+                .nodes
+                .map(node => node.value);
+            let body = ast.nodes[2];
+            return LispFunction(this, params, body, env);
         } else {
-            let f = env.find(functionName);
-            Interpreter.checkUndefined(f);
-            let args = ast.nodes
-                .slice(1)
-                .map(arg => this.run(arg, env));
-            return f(args);
+            if (ast.nodes[0].type === NodeType.ATOM) {
+                let f = env.find(functionName);
+                Interpreter.checkUndefined(f);
+                let args = ast.nodes
+                    .slice(1)
+                    .map(arg => this.run(arg, env));
+                return f(args);
+            } else {
+                let lambda = this.run(ast.nodes[0], env);
+                let args = ast.nodes.slice(1);
+                return lambda.invoke(args);
+            }
         }
     }
 };
