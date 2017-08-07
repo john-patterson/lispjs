@@ -95,4 +95,50 @@ describe('Lists', () => {
         ]);
         testAST(tokenStream, expectedAST);
     });
+
+    it('should parse adjacent lists', () => {
+        let tokenStream = [
+            lbrace,
+                lbrace, rbrace,
+                lbrace, rbrace,
+            rbrace
+        ];
+        let expectedAST = nodes.list([
+            nodes.list([]),
+            nodes.list([])
+        ]);
+        testAST(tokenStream, expectedAST);
+    });
+
+    it('should parse non-homogenous lists', () => {
+        let tokenStream = [
+            lbrace,
+                intTokens[0],
+                intTokens[1],
+                lbrace,
+                    identifierTokens[0],
+                rbrace,
+                intTokens[2],
+                lbrace,
+                    identifierTokens[2],
+                    lbrace, 
+                        intTokens[1],
+                    rbrace,
+                rbrace,
+            rbrace
+        ];
+        let expectedAST = nodes.list([
+            intNodes[0],
+            intNodes[1],
+            nodes.list([identifierNodes[0]]),
+            intNodes[2],
+            nodes.list([
+                identifierNodes[2],
+                nodes.list([
+                    intNodes[1]
+                ])
+            ])
+        ]);
+        testAST(tokenStream, expectedAST);
+    });
 });
