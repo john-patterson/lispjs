@@ -8,20 +8,20 @@ describe('Simple atom', () => {
     it('should return integers', () => {
         let integer = nodes.atom(tokens.intToken(3));
         let interpreter = new Interpreter();
-        let result = interpreter.run(integer);
+        let result = interpreter.run(integer, {});
         assert.equal(result, 3);
     });
 
     it('should lookup symbols', () => {
         let symbol = nodes.atom(tokens.identifierToken('_cow'));
-        let interpreter = new Interpreter({
+        let interpreter = new Interpreter();
+        let result = interpreter.run(symbol, {
             find: function(key) {
                 if (key === '_cow')
                     return 3;
                 return null;
             }
         });
-        let result = interpreter.run(symbol);
         assert.equal(result, 3);
     });
 
@@ -31,14 +31,14 @@ describe('Simple atom', () => {
             nodes.atom(tokens.intToken(1)),
             nodes.atom(tokens.intToken(2)),
         ]);
-        let interpreter = new Interpreter({
+        let interpreter = new Interpreter();
+        let result = interpreter.run(ast, {
             find: function(key) {
                 if (key === 'plus')
                     return (args) => args[0] + args[1];
                 return null;
             }
         });
-        let result = interpreter.run(ast);
         assert.equal(result, 3);
     });
 
@@ -61,7 +61,7 @@ describe('Simple atom', () => {
         env.update({
             'cow-in-field': 2
         });
-        let result = (new Interpreter(env)).run(ast);
+        let result = (new Interpreter()).run(ast, env);
         assert.equal(result, 34);
     });
 

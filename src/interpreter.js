@@ -2,8 +2,7 @@ const { Env } = require('./env');
 const { Parser, NodeType } = require('./parser');
 const { Scanner } = require('./scanner');
 
-let Interpreter = function(env) {
-    this.env = env;
+let Interpreter = function() {
 };
 
 Interpreter.checkUndefined = 
@@ -12,21 +11,25 @@ Interpreter.checkUndefined =
             throw new Error(`Symbol ${symbol} not defined.`); 
     };
 
-Interpreter.prototype.run = function(ast) {
+Interpreter.prototype.run = function(ast, env) {
+    let createBinding = (symbolName, body) => {
+
+    };
+
     if (ast.type === NodeType.ATOM) {
         if (ast.isInt) {
             return ast.value;
         } else {
-            let lookup = this.env.find(ast.value);
+            let lookup = env.find(ast.value);
             Interpreter.checkUndefined(lookup);
             return lookup;
         }
     } else if (ast.type === NodeType.LIST) {
-        let f = this.env.find(ast.nodes[0].value);
+        let f = env.find(ast.nodes[0].value);
         Interpreter.checkUndefined(f);
         let args = ast.nodes
             .slice(1)
-            .map(arg => this.run(arg));
+            .map(arg => this.run(arg, env));
         return f(args);
     }
 };
