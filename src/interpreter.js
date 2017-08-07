@@ -18,7 +18,7 @@ Interpreter.prototype.run = function(ast, env) {
         } else {
             let lookup = env.find(ast.value);
             Interpreter.checkUndefined(lookup);
-            return lookup.value;
+            return lookup;
         }
     } else if (ast.type === NodeType.LIST) {
         let functionName = ast.nodes[0].value; 

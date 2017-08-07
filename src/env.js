@@ -52,7 +52,7 @@ let LispFunction = function(interpreter, params, body, env) {
 
         let paramsBindings = {};
         for(let i = 0; i < paramsLength; i++) {
-            paramsBindings[_this.params[i]] = args[i];
+            paramsBindings[_this.params[i]] = _this.interpreter.run(args[i], env);
         }
 
         let newEnv = _this.env.extend(paramsBindings);
