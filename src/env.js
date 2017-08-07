@@ -10,8 +10,10 @@ Env.prototype.update = function(mapping) {
 };
 
 Env.prototype.extend = function(mapping) {
-    let newEnv = Object.assign(this, mapping);
+    let newEnv = Object.assign(this, {});
     newEnv.find = this.find;
+    newEnv.update = this.update;
+    newEnv.update(mapping);
     return newEnv;
 }
 
