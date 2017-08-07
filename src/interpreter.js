@@ -12,23 +12,6 @@ Interpreter.checkUndefined =
     };
 
 Interpreter.prototype.run = function(ast, env) {
-    let createBinding = (symbolName, body) => {
-        let binding = {};
-        if (body[0].type === NodeType.ATOM) {
-            binding[symbolName] = body[0].isInt
-                ? body[0].value
-                : env.find(body[0].value);
-            Interpreter.checkUndefined(binding[symbolName]);
-        } else {
-            binding[symbolName] = (args) => {
-                return this.run(nodes.list(
-                    [body].concat(args)
-                ));
-            };
-        }
-        return binding;
-    };
-
     if (ast.type === NodeType.ATOM) {
         if (ast.isInt) {
             return ast.value;
@@ -41,7 +24,9 @@ Interpreter.prototype.run = function(ast, env) {
         let functionName = ast.nodes[0].value; 
         if (functionName === 'define') {
             let symbolName = ast.nodes[1].value;
-            let binding = createBinding(symbolName, ast.nodes.slice(2));
+            let value = this.run(ast.nodes[2], env);
+            let binding = {};
+            binding[symbolName] = value;
             env.update(binding);
         } else {
             let f = env.find(functionName);

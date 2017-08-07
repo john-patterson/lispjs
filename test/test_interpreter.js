@@ -105,4 +105,16 @@ describe('Define', () => {
         assert.throws(() => interpreter.run(ast, env));
     });
 
+    it('should be able to define new function and invoke', () => {
+        let ast = nodes.list([
+            nodes.atom(tokens.identifierToken('define')),
+            nodes.atom(tokens.identifierToken('foo')),
+            nodes.atom(tokens.identifierToken('moo'))
+        ]);
+        let env = Env.standard();
+        let interpreter = new Interpreter();
+        assert.throws(() => interpreter.run(ast, env));
+
+    });
+
 });
