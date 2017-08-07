@@ -129,4 +129,44 @@ describe('Lambda', () => {
         let result = interpreter.run(ast, env);
         assert.equal(result, 35);
     });
+
+    it('should invoke one arg function', () => {
+        let ast = nodes.list([
+            nodes.list([
+                nodes.atom(tokens.identifierToken('lambda')),
+                nodes.list([
+                    nodes.atom(tokens.identifierToken('a')),
+                ]),
+                nodes.list([
+                    nodes.atom(tokens.identifierToken('+')),
+                    nodes.atom(tokens.identifierToken('a')),
+                    nodes.atom(tokens.intToken(2))
+                ])
+            ]),
+            nodes.atom(tokens.intToken(10)),
+        ]);
+        let env = Env.standard();
+        let interpreter = new Interpreter();
+        let result = interpreter.run(ast, env);
+        assert.equal(result, 12);
+    });
+
+    it('should invoke no arg function', () => {
+        let ast = nodes.list([
+            nodes.list([
+                nodes.atom(tokens.identifierToken('lambda')),
+                nodes.list([
+                ]),
+                nodes.list([
+                    nodes.atom(tokens.identifierToken('+')),
+                    nodes.atom(tokens.intToken(1)),
+                    nodes.atom(tokens.intToken(2))
+                ])
+            ]),
+        ]);
+        let env = Env.standard();
+        let interpreter = new Interpreter();
+        let result = interpreter.run(ast, env);
+        assert.equal(result, 3);
+    });
 })
