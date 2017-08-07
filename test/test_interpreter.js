@@ -107,7 +107,7 @@ describe('Define', () => {
 });
 
 describe('Lambda', () => {
-    it.only('should invoke two arg function', () => {
+    it('should invoke two arg function', () => {
         let ast = nodes.list([
             nodes.list([
                 nodes.atom(tokens.identifierToken('lambda')),
