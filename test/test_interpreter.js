@@ -66,3 +66,43 @@ describe('Simple atom', () => {
     });
 
 });
+
+describe('Define', () => {
+    it('should define new var for atom binding', () => {
+        let ast = nodes.list([
+            nodes.atom(tokens.identifierToken('define')),
+            nodes.atom(tokens.identifierToken('foo')),
+            nodes.atom(tokens.intToken(2))
+        ]);
+        let env = Env.standard();
+        let interpreter = new Interpreter();
+        interpreter.run(ast, env);
+        assert.equal(env.find('foo'), 2);
+    });
+
+    it('should lookup var at bind time', () => {
+        let ast = nodes.list([
+            nodes.atom(tokens.identifierToken('define')),
+            nodes.atom(tokens.identifierToken('foo')),
+            nodes.atom(tokens.identifierToken('moo'))
+        ]);
+        let env = Env.standard();
+        let interpreter = new Interpreter();
+        env.update({'moo': 10});
+        interpreter.run(ast, env);
+        env.update({'moo': 15});
+        assert.equal(env.find('foo'), 10);
+    });
+
+    it('should throw failed lookup', () => {
+        let ast = nodes.list([
+            nodes.atom(tokens.identifierToken('define')),
+            nodes.atom(tokens.identifierToken('foo')),
+            nodes.atom(tokens.identifierToken('moo'))
+        ]);
+        let env = Env.standard();
+        let interpreter = new Interpreter();
+        assert.throws(() => interpreter.run(ast, env));
+    });
+
+});

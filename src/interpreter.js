@@ -1,5 +1,5 @@
 const { Env } = require('./env');
-const { Parser, NodeType } = require('./parser');
+const { Parser, NodeType, nodes } = require('./parser');
 const { Scanner } = require('./scanner');
 
 let Interpreter = function() {
@@ -13,7 +13,20 @@ Interpreter.checkUndefined =
 
 Interpreter.prototype.run = function(ast, env) {
     let createBinding = (symbolName, body) => {
-
+        let binding = {};
+        if (body[0].type === NodeType.ATOM) {
+            binding[symbolName] = body[0].isInt
+                ? body[0].value
+                : env.find(body[0].value);
+            Interpreter.checkUndefined(binding[symbolName]);
+        } else {
+            binding[symbolName] = (args) => {
+                return this.run(nodes.list(
+                    [body].concat(args)
+                ));
+            };
+        }
+        return binding;
     };
 
     if (ast.type === NodeType.ATOM) {
@@ -25,12 +38,19 @@ Interpreter.prototype.run = function(ast, env) {
             return lookup;
         }
     } else if (ast.type === NodeType.LIST) {
-        let f = env.find(ast.nodes[0].value);
-        Interpreter.checkUndefined(f);
-        let args = ast.nodes
-            .slice(1)
-            .map(arg => this.run(arg, env));
-        return f(args);
+        let functionName = ast.nodes[0].value; 
+        if (functionName === 'define') {
+            let symbolName = ast.nodes[1].value;
+            let binding = createBinding(symbolName, ast.nodes.slice(2));
+            env.update(binding);
+        } else {
+            let f = env.find(functionName);
+            Interpreter.checkUndefined(f);
+            let args = ast.nodes
+                .slice(1)
+                .map(arg => this.run(arg, env));
+            return f(args);
+        }
     }
 };
 
