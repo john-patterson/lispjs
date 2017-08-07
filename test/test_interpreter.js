@@ -22,6 +22,23 @@ describe('Simple atom', () => {
         });
         let result = interpreter.run(symbol);
         assert.equal(result, 3);
-    })
+    });
+
+    it('should apply functions', () => {
+        let ast = nodes.list([
+            nodes.atom(tokens.identifierToken('plus')),
+            nodes.atom(tokens.intToken(1)),
+            nodes.atom(tokens.intToken(2)),
+        ]);
+        let interpreter = new Interpreter({
+            find: function(key) {
+                if (key === 'plus')
+                    return (args) => args[0] + args[1];
+                return null;
+            }
+        });
+        let result = interpreter.run(ast);
+        assert.equal(result, 3);
+    });
 
 });
