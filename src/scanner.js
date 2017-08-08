@@ -37,13 +37,13 @@ let Scanner = function() {
 
 Scanner.prototype.tokenize = function(source) {
     let spacedParens = source
-        .replace('(', '( ')
-        .replace(')', ' )')
+        .replace(/\(/g, '( ')
+        .replace(/\)/g, ' )')
         .split(' ');
     
     return spacedParens.map(item => {
         const numberRegex = /^\d+$/;
-        const identifierRegex = /^[a-zA-Z\_][a-zA-Z\_\-0-9]*$/; 
+        const identifierRegex = /^[a-zA-Z\_\*][a-zA-Z\_\-0-9]*$/; 
 
         if (item === '(') {
             return tokens.lbraceToken();

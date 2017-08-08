@@ -68,3 +68,32 @@ describe('Identifiers', () => {
         tokens.identifierToken('ab0')
     ]));
 });
+
+describe('Expressions', () => {
+    it('should do simple multiplication', runTest('(* 1 2)', [
+        tokens.lbraceToken(),
+        tokens.identifierToken('*'),
+        tokens.intToken(1),
+        tokens.intToken(2),
+        tokens.rbraceToken()
+    ]));
+
+    it('should do nested computation', runTest('(* (app a b) (rhy a b c) 2)', [
+        tokens.lbraceToken(),
+        tokens.identifierToken('*'),
+        tokens.lbraceToken(),
+        tokens.identifierToken('app'),
+        tokens.identifierToken('a'),
+        tokens.identifierToken('b'),
+        tokens.rbraceToken(),
+        tokens.lbraceToken(),
+        tokens.identifierToken('rhy'),
+        tokens.identifierToken('a'),
+        tokens.identifierToken('b'),
+        tokens.identifierToken('c'),
+        tokens.rbraceToken(),
+        tokens.intToken(2),
+        tokens.rbraceToken()
+    ]));
+
+});
