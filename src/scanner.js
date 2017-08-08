@@ -37,6 +37,7 @@ let Scanner = function() {
 
 Scanner.prototype.tokenize = function(source) {
     let spacedParens = source
+        .trim()
         .replace(/\(/g, '( ')
         .replace(/\)/g, ' )')
         .split(' ');

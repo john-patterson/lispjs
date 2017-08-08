@@ -95,5 +95,15 @@ describe('Expressions', () => {
         tokens.intToken(2),
         tokens.rbraceToken()
     ]));
+});
+
+describe('Messy Input', () => {
+    it('should omit trailing and leading whitespace', runTest('     (* 1 2)\n\r', [
+        tokens.lbraceToken(),
+        tokens.identifierToken('*'),
+        tokens.intToken(1),
+        tokens.intToken(2),
+        tokens.rbraceToken()
+    ]));
 
 });
