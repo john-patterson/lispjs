@@ -63,6 +63,11 @@ Scanner.prototype.skipWhitespace = (source, initialPosition) => {
 };
 
 Scanner.prototype.readString = (source, initialPosition) => {
+    if (source[initialPosition] !== "'") {
+        throw new UnknownSourceCharacterError(
+            `expected ' got ${source[initialPosition]} trying to parse string`);
+    }
+
     let newPos = initialPosition + 1;
     while (newPos < source.length 
             && (source[newPos] != "'" || source[newPos - 1] == '\\')) {
@@ -71,6 +76,7 @@ Scanner.prototype.readString = (source, initialPosition) => {
     return {
         position: newPos < source.length ? newPos + 1 : newPos,
         value: source.slice(initialPosition + 1, newPos)
+            .replace(/\\'/g, "'")
     };
 };
 
