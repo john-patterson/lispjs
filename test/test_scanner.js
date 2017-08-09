@@ -1,5 +1,6 @@
 const assert = require('assert');
-const { Scanner, tokens, TokenType, UnknownSourceCharacterError } = require('../src/scanner');
+const { Scanner, tokens, TokenType, 
+    UnknownSourceCharacterError, UnexpectedEOFError } = require('../src/scanner');
 
 let runTest = (input, expectedTokenStream) => {
     return () => {
@@ -144,19 +145,43 @@ describe.only('Sub-scanning methods', () => {
     });
 
     describe('readString', () => {
-        it('should read empty string', () => {
+        let readString = (input, expectedPosition, expectedValue) => {
             let scanner = new Scanner();
-            let input = "''";
             let result = scanner.readString(input, 0);
-            assert.equal(result.position, input.length);
-            assert.equal(result.value, '');
+            assert.equal(result.position, expectedPosition);
+            assert.equal(result.value, expectedValue);
+        };
+
+        it('should read empty string', () => {
+            let input = "''";
+            readString(input, input.length, '');
         });
 
-        it('should read non-empty string');
-        it('should read escaped character');
-        it('should barf on non-string start');
-        it('should barf on non-ended string');
-        it('should parse strings with newlines');
+        it('should read non-empty string', () => {
+            let input = "'lion king'";
+            readString(input, input.length, 'lion king');
+        });
+
+        it('should read escaped character', () => {
+            let input = "'lion\\'s den";
+            readString(input, input.length, "lion's den");
+        });
+
+        it('should barf on non-string start', () => {
+            let input = "nope 'over here'";
+            assert.throws(() => readString(input), UnknownSourceCharacterError);
+        });
+
+        it('should barf on non-ended string', () => {
+            let input = "'no resolution";
+            assert.throws(() => readString(input), UnexpectedEOFError);
+        });
+
+        it('should parse strings with newlines', () => {
+            let input = "'this is\na\n\tmultiline\nstring'";
+            readString(input, input.length, 
+                'this is\na\n\tmultiline\nstring');
+        });
 
     });
     /*
