@@ -70,13 +70,20 @@ describe('Identifiers', () => {
 });
 
 describe('Expressions', () => {
-    it('should do simple multiplication', runTest('(* 1 2)', [
-        tokens.lbraceToken(),
-        tokens.identifierToken('*'),
-        tokens.intToken(1),
-        tokens.intToken(2),
-        tokens.rbraceToken()
-    ]));
+    let exprTest = (sym) => {
+        return runTest(`(${sym} 1 2)`, [
+            tokens.lbraceToken(),
+            tokens.identifierToken(sym),
+            tokens.intToken(1),
+            tokens.intToken(2),
+            tokens.rbraceToken()
+        ]);
+    };
+
+    it('should do simple multiplication', exprTest('*'));
+    it('should do simple addition', exprTest('+'));
+    it('should do simple subtraction', exprTest('-'));
+    it('should do simple division', exprTest('/'));
 
     it('should do nested computation', runTest('(* (app a b) (rhy a b c) 2)', [
         tokens.lbraceToken(),

@@ -44,7 +44,7 @@ Scanner.prototype.tokenize = function(source) {
     
     return spacedParens.map(item => {
         const numberRegex = /^\d+$/;
-        const identifierRegex = /^[a-zA-Z\_\*][a-zA-Z\_\-0-9]*$/; 
+        const identifierRegex = /^[a-zA-Z\_][a-zA-Z\_\-0-9]*$/; 
 
         if (item === '(') {
             return tokens.lbraceToken();
@@ -53,6 +53,9 @@ Scanner.prototype.tokenize = function(source) {
         } else if (numberRegex.test(item)) {
             return tokens.intToken(parseInt(item));
         } else if (identifierRegex.test(item)) {
+            return tokens.identifierToken(item);
+        } else if (item === '*' || item === '+' 
+                || item === '-' || item === '/') {
             return tokens.identifierToken(item);
         }
 
