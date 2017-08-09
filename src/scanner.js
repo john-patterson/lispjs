@@ -44,7 +44,7 @@ Scanner.prototype.tokenize = function(source) {
     
     return spacedParens.map(item => {
         const numberRegex = /^\d+$/;
-        const identifierRegex = /^[a-zA-Z\_][a-zA-Z\_\-0-9]*$/; 
+        const identifierRegex = /^[a-zA-Z\_][a-zA-Z\_\-0-9]*\??$/; 
 
         if (item === '(') {
             return tokens.lbraceToken();

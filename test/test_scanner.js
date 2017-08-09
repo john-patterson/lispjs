@@ -56,6 +56,10 @@ describe('Identifiers', () => {
         tokens.identifierToken('_a')
     ]));
 
+    it('should accept trailing question mark', runTest('is-null?', [
+        tokens.identifierToken('is-null?')
+    ]));
+
     it('should not accept leading hyphen', runFailure('-a'));
 
     it('should accept mixed underscore and hyphen', runTest('_a-b_c-d__ef', [
