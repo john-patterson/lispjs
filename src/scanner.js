@@ -116,7 +116,10 @@ Scanner.prototype.readNumberOrIdentifier = (source, initialPosition) => {
     };
 };
 
-
+let specialCharacters = new Set([
+    '*', '+', '/', '-',
+    '<', '>'
+]);
 
 Scanner.prototype.tokenize = function(source) {
     let position = 0;
@@ -134,8 +137,7 @@ Scanner.prototype.tokenize = function(source) {
             let result = this.readString(source, position);
             position = result.position;
             tokenStream.push(tokens.stringToken(result.value));
-        } else if (ch === '*' || ch === '+' 
-                || ch === '/' || ch === '-') {
+        } else if (specialCharacters.has(ch)) {
             tokenStream.push(tokens.identifierToken(ch));
         } else {
             let result = this.readNumberOrIdentifier(source, position);

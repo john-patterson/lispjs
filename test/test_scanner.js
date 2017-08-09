@@ -119,7 +119,7 @@ describe('Messy Input', () => {
     ]));
 });
 
-describe.only('Sub-scanning methods', () => {
+describe('Sub-scanning methods', () => {
     describe('skipWhitespace', () => {
         it('should return position after last whitespace', () => {
             let scanner = new Scanner();

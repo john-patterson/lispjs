@@ -24,7 +24,9 @@ Interpreter.prototype.run = function(ast, env) {
         let functionName = ast.nodes[0].value; 
         if (functionName === 'define') {
             let symbolName = ast.nodes[1].value;
+            console.log('symbolName: ' + symbolName);
             let value = this.run(ast.nodes[2], env);
+            console.log('value: ' + value);
             let binding = {};
             binding[symbolName] = value;
             env.update(binding);
@@ -34,6 +36,21 @@ Interpreter.prototype.run = function(ast, env) {
                 .map(node => node.value);
             let body = ast.nodes[2];
             return LispFunction(this, params, body, env);
+        } else if (functionName === 'if') {
+            console.log('If check...');
+            let conditionalCheck = this.run(ast.nodes[1], env);
+            console.log(`Conditional check: ${conditionalCheck}`);
+            if (conditionalCheck) {
+                console.log('In the true branch');
+                return this.run(ast.nodes[2], env);
+            } else {
+                console.log('In the false branch');
+                if (3 < ast.nodes.length) {
+                    return this.run(ast.nodes[3], env);
+                } else {
+                    return undefined;
+                }
+            }
         } else {
             if (ast.nodes[0].type === NodeType.ATOM) {
                 let f = env.find(functionName);

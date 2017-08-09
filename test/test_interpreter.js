@@ -170,3 +170,98 @@ describe('Lambda', () => {
         assert.equal(result, 3);
     });
 });
+
+describe.only('Conditionals', () => {
+    let trueConditional = nodes.list([ 
+        nodes.atom(tokens.identifierToken('<')),
+        nodes.atom(tokens.intToken(1)),
+        nodes.atom(tokens.intToken(2)),
+    ]);
+    let falseConditional = nodes.list([ 
+        nodes.atom(tokens.identifierToken('<')),
+        nodes.atom(tokens.intToken(2)),
+        nodes.atom(tokens.intToken(1)),
+    ]);
+
+    it('should return the first expression if true', () => {
+        let ast = nodes.list([
+            nodes.atom(tokens.identifierToken('if')),
+            trueConditional,
+            nodes.atom(tokens.intToken(1)),
+            nodes.atom(tokens.intToken(2))
+        ]);
+        let env = Env.standard();
+        let interpreter = new Interpreter();
+        let result = interpreter.run(ast, env);
+        assert.equal(result, 1);
+    });
+
+    it('should return the second expression if false', () => {
+        let ast = nodes.list([
+            nodes.atom(tokens.identifierToken('if')),
+            falseConditional,
+            nodes.atom(tokens.intToken(1)),
+            nodes.atom(tokens.intToken(2))
+        ]);
+        let env = Env.standard();
+        let interpreter = new Interpreter();
+        let result = interpreter.run(ast, env);
+        assert.equal(result, 2);
+    });
+
+    it('should return undefined if false and no second expr', () => {
+        let ast = nodes.list([
+            nodes.atom(tokens.identifierToken('if')),
+            falseConditional,
+            nodes.atom(tokens.intToken(1)),
+        ]);
+        let env = Env.standard();
+        let interpreter = new Interpreter();
+        let result = interpreter.run(ast, env);
+        assert.equal(result, undefined);
+    });
+
+    it('should not evaluate second if true', () => {
+        let ast = nodes.list([
+            nodes.atom(tokens.identifierToken('if')),
+            trueConditional,
+            nodes.list([
+                nodes.atom(tokens.identifierToken('define')),
+                nodes.atom(tokens.identifierToken('a')),
+                nodes.atom(tokens.intToken(1))
+            ]),
+            nodes.list([
+                nodes.atom(tokens.identifierToken('define')),
+                nodes.atom(tokens.identifierToken('b')),
+                nodes.atom(tokens.intToken(1))
+            ]),
+        ]);
+        let env = Env.standard();
+        let interpreter = new Interpreter();
+        interpreter.run(ast, env);
+        assert.equal(env.find('a'), 1);
+        assert.throws(() => env.find('b'));
+    });
+
+    it('should not evaluate first if false', () => {
+        let ast = nodes.list([
+            nodes.atom(tokens.identifierToken('if')),
+            falseConditional,
+            nodes.list([
+                nodes.atom(tokens.identifierToken('define')),
+                nodes.atom(tokens.identifierToken('a')),
+                nodes.atom(tokens.intToken(1))
+            ]),
+            nodes.list([
+                nodes.atom(tokens.identifierToken('define')),
+                nodes.atom(tokens.identifierToken('b')),
+                nodes.atom(tokens.intToken(1))
+            ]),
+        ]);
+        let env = Env.standard();
+        let interpreter = new Interpreter();
+        interpreter.run(ast, env);
+        assert.equal(env.find('b'), 1);
+        assert.throws(() => env.find('a'));
+    });
+});

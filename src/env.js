@@ -21,7 +21,7 @@ Env.prototype.find = function(key) {
     if (key in this.data) {
         return this.data[key];
     }
-    return null;
+    throw Error(`could not find symbol ${key}`);
 };
 
 Env.standard = function() {
@@ -30,7 +30,8 @@ Env.standard = function() {
         '+': (args) => args.reduce((prev, curr) => prev + curr),
         '-': (args) => args.reduce((prev, curr) => prev - curr),
         '*': (args) => args.reduce((prev, curr) => prev * curr),
-        '/': (args) => args.reduce((prev, curr) => prev / curr)
+        '/': (args) => args.reduce((prev, curr) => prev / curr),
+        '<': (args) => args.reduce((prev, curr) => prev < curr),
     });
 
     return env;
