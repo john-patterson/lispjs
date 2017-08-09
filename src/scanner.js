@@ -1,5 +1,6 @@
 const TokenType = {
     INT: 'INT',
+    STRING: 'STRING',
     LBRACE: 'LBRACE',
     RBRACE: 'RBRACE',
     INDENTIFIER: 'IDENTIFIER'
@@ -8,6 +9,11 @@ const TokenType = {
 const tokens = {
     intToken: (value) => ({
         type: TokenType.INT,
+        value: value
+    }),
+
+    stringToken: (value) => ({
+        type: TokenType.STRING,
         value: value
     }),
 

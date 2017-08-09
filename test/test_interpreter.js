@@ -169,4 +169,4 @@ describe('Lambda', () => {
         let result = interpreter.run(ast, env);
         assert.equal(result, 3);
     });
-})
+});

@@ -116,5 +116,22 @@ describe('Messy Input', () => {
         tokens.intToken(2),
         tokens.rbraceToken()
     ]));
+});
 
+describe('Strings', () => {
+    it('should parse empty string', runTest("''", [ 
+        tokens.stringToken('')
+    ]));
+
+    it('should parse string with stuff', runTest("'stuff'", [
+        tokens.stringToken('stuff')
+    ]));
+
+    it('should parse string with new line', runTest("'stuff\nstuff'", [
+        tokens.stringToken('stuff\nstuff')
+    ]));
+
+    it('should parse string escaped quote', runTest(`stu\'ff`, [
+        tokens.stringToken("stu'ff")
+    ]));
 });
