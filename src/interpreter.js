@@ -38,10 +38,14 @@ Interpreter.prototype.run = function(ast, env) {
             if (ast.nodes[0].type === NodeType.ATOM) {
                 let f = env.find(functionName);
                 Interpreter.checkUndefined(f);
-                let args = ast.nodes
-                    .slice(1)
-                    .map(arg => this.run(arg, env));
-                return f(args);
+                if (f.invoke != null) {
+                    let args = ast.nodes.slice(1);
+                    return f.invoke(args);
+                } else {
+                    let args = ast.nodes.slice(1)
+                        .map(arg => this.run(arg, env));
+                    return f(args);
+                }
             } else {
                 let lambda = this.run(ast.nodes[0], env);
                 let args = ast.nodes.slice(1);
