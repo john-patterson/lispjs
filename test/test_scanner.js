@@ -118,7 +118,48 @@ describe('Messy Input', () => {
     ]));
 });
 
-describe('Strings', () => {
+describe.only('Sub-scanning methods', () => {
+    describe('skipWhitespace', () => {
+        it('should return position after last whitespace', () => {
+            let scanner = new Scanner();
+            let input = '     t';
+            let newPosition = scanner.skipWhitespace(input, 0).position;
+            assert.equal(newPosition, input.length - 1);
+        });
+
+        it('should return starting pos if not whitespace', () => {
+            let scanner = new Scanner();
+            let input = 'bark t';
+            let newPosition = scanner.skipWhitespace(input, 0).position;
+            assert.equal(newPosition, 0);
+        });
+
+        it('should skip all kinds of mixed whitespace', () => {
+            let scanner = new Scanner();
+            let input = '   \t   \n    \n t';
+            let newPosition = scanner.skipWhitespace(input, 0).position;
+            assert.equal(newPosition, input.length - 1);
+        });
+
+    });
+
+    describe('readString', () => {
+        it('should read empty string', () => {
+            let scanner = new Scanner();
+            let input = "''";
+            let result = scanner.readString(input, 0);
+            assert.equal(result.position, input.length);
+            assert.equal(result.value, '');
+        });
+
+        it('should read non-empty string');
+        it('should read escaped character');
+        it('should barf on non-string start');
+        it('should barf on non-ended string');
+        it('should parse strings with newlines');
+
+    });
+    /*
     it('should parse empty string', runTest("''", [ 
         tokens.stringToken('')
     ]));
@@ -134,4 +175,5 @@ describe('Strings', () => {
     it('should parse string escaped quote', runTest(`stu\'ff`, [
         tokens.stringToken("stu'ff")
     ]));
+    */
 });
