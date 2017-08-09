@@ -118,7 +118,7 @@ Scanner.prototype.tokenize = function(source) {
     let position = 0;
     let tokenStream = [];
     while (position < source.length) {
-        position = this.skipWhitespace(source, position);
+        position = this.skipWhitespace(source, position).position;
         let ch = source[position];
         if (ch === '(') {
             tokenStream.push(tokens.lbraceToken());
