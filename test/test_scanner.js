@@ -184,21 +184,69 @@ describe('Sub-scanning methods', () => {
         });
 
     });
-    /*
-    it('should parse empty string', runTest("''", [ 
-        tokens.stringToken('')
-    ]));
 
-    it('should parse string with stuff', runTest("'stuff'", [
-        tokens.stringToken('stuff')
-    ]));
+    describe('readNumberOrIdentifier', () => {
+         let readNorI = (input, expectedPosition, expectedValue) => {
+            let scanner = new Scanner();
+            let result = scanner.readNumberOrIdentifier(input, 0);
+            assert.equal(result.position, expectedPosition);
+            assert.equal(result.value, expectedValue);
+            assert.equal(result.isNumber,
+                    typeof result.value === 'number');
+        };
 
-    it('should parse string with new line', runTest("'stuff\nstuff'", [
-        tokens.stringToken('stuff\nstuff')
-    ]));
+       it('should parse integer', () => {
+           let input = '234 test';
+           readNorI(input, 3, 234);
+        });
 
-    it('should parse string escaped quote', runTest(`stu\'ff`, [
-        tokens.stringToken("stu'ff")
-    ]));
-    */
+        it('should parse float', () => {
+            let input = '0.234';
+            readNorI(input, input.length, 0.234);
+        });
+
+        it('should parse trailing period float', () => {
+            let input = '234.';
+            readNorI(input, input.length, 234.0);
+        });
+
+        it('should parse leading period float', () => {
+            let input = '.234';
+            readNorI(input, input.length, 0.234);
+        });
+
+        it('should recognize plain text identifiers', () => {
+            let input = 'foo test';
+            readNorI(input, 3, 'foo');
+        });
+
+        it('should recognize identifiers with numbers', () => {
+            let input = 'foo3 test';
+            readNorI(input, 4, 'foo3');
+        });
+
+        it('should not let identifiers lead with number', () => {
+            assert.throws(() => readNorI('0sdf',
+                UnknownSourceCharacterError));
+        });
+
+        it('should not let two periods', () => {
+            assert.throws(() => readNorI('test..thing',
+                UnknownSourceCharacterError));
+        });
+
+        it('should allow one period in identifier', () => {
+            let input = 'fo.o test';
+            readNorI(input, 4, 'fo.o');
+        });
+
+        it('should disallow two periods in identifier', () => {
+            let input = 'f.o.o test';
+            assert.throws(() => readNorI(input),
+                UnknownSourceCharacterError);
+        });
+
+
+    });
 });
+

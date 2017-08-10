@@ -85,7 +85,7 @@ Scanner.prototype.readNumberOrIdentifier = (source, initialPosition) => {
     let seenPeriod = false;
     let newPos = initialPosition;
     let firstCharacterIsNumber = '0' <= source[initialPosition]
-        || source[initialPosition] <= '9';
+        && source[initialPosition] <= '9';
 
     while (newPos < source.length && !isSpace(source[newPos])) {
         if (source[newPos] === '.') {
@@ -102,7 +102,7 @@ Scanner.prototype.readNumberOrIdentifier = (source, initialPosition) => {
     let raw = source.slice(initialPosition, newPos);
     let value = seenNonDigitAndNonPeriod
         ? raw
-        : parseInt(seenNonDigitAndNonPeriod);
+        : (seenPeriod ? parseFloat : parseInt)(raw);
 
     if (firstCharacterIsNumber && seenNonDigitAndNonPeriod)
         throw new UnknownSourceCharacterError(
