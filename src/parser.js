@@ -20,6 +20,20 @@ const nodes = {
     }),
 };
 
+let UnexpectedEOFError = function() {
+    this.name = 'UnexpectedEOFError';
+    this.message = 'Unexpected EOF while parsing.';
+};
+
+UnexpectedEOFError.prototype = Error.prototype;
+
+let UnexpectedEndOfExpression = function() {
+    this.name = 'UnexpectedEndOfExpression';
+    this.message = "Unexpected ')' found.";
+};
+
+UnexpectedEndOfExpression.prototype = Error.prototype;
+
 let Parser = function() {
     let self = this;
 
@@ -29,7 +43,7 @@ let Parser = function() {
 
     self.parse = (tokenStream) => {
         if (tokenStream.length == 0) {
-            throw new Error('unexpected EOF while reading');
+            throw new UnexpectedEOFError();
         }
 
         let tokenStack = tokenStream.slice(0);
@@ -44,7 +58,7 @@ let Parser = function() {
                 tokenStack.shift();
                 return nodes.list(nodeCollection);
             } else if (token.type === TokenType.RBRACE) {
-                throw new Error("unexpected ')' found");
+                throw new UnexpectedEndOfExpression();
             } else {
                 return nodes.atom(token);
             }
