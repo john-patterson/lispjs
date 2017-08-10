@@ -171,7 +171,7 @@ describe('Lambda', () => {
     });
 });
 
-describe.only('Conditionals', () => {
+describe('Conditionals', () => {
     let trueConditional = nodes.list([ 
         nodes.atom(tokens.identifierToken('<')),
         nodes.atom(tokens.intToken(1)),
