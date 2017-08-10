@@ -6,7 +6,7 @@ const assert = require('assert');
 
 let execute = (input, env) => {
     let interpreter = Interpreter();
-    let parser = new Parser();
+    let parser = Parser();
     let scanner = new Scanner();
     let tokenStream = scanner.tokenize(input);
     let ast = parser.parse(tokenStream);

@@ -9,7 +9,7 @@ process.stdin.setEncoding('utf-8');
 let util = require('util');
 
 let interpreter = Interpreter();
-let parser = new Parser();
+let parser = Parser();
 let scanner = new Scanner();
 let env = Env.standard();
 
