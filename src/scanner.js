@@ -87,14 +87,25 @@ Scanner.prototype.readNumberOrIdentifier = (source, initialPosition) => {
     let firstCharacterIsNumber = '0' <= source[initialPosition]
         && source[initialPosition] <= '9';
 
-    while (newPos < source.length && !isSpace(source[newPos])) {
-        if (source[newPos] === '.') {
+    while (newPos < source.length && !isSpace(source[newPos]) && source[newPos] !== ')') {
+        let ch = source[newPos];
+        if (ch === '.') {
             if (seenPeriod) {
                 throw new UnknownSourceCharacterError("unexpected '.' at position " + newPos);
             }
             seenPeriod = true;
-        } else if (source[newPos] < '0' || '9' < source[newPos]) {
+        } else if (ch < '0' || '9' < ch) {
             seenNonDigitAndNonPeriod = true;
+        }
+
+        if ((ch < 'a' || 'z' < ch)
+                && (ch < 'A' || 'Z' < ch)
+                && (ch < '0' || '9' < ch)
+                && (newPos != source.length - 1 || ch !== '?')
+                && (newPos != 0 || ch !== '_')
+                && (ch !== '-' || newPos == 0)
+                && (ch !== '.')) {
+            throw new UnknownSourceCharacterError(`unexpected '${ch}' at position ${newPos}`);
         }
         newPos += 1;
     }
@@ -104,7 +115,8 @@ Scanner.prototype.readNumberOrIdentifier = (source, initialPosition) => {
         ? raw
         : (seenPeriod ? parseFloat : parseInt)(raw);
 
-    if (firstCharacterIsNumber && seenNonDigitAndNonPeriod)
+    if ((firstCharacterIsNumber && seenNonDigitAndNonPeriod)
+            || (seenNonDigitAndNonPeriod && seenPeriod))
         throw new UnknownSourceCharacterError(
             `unexpected '${source[initialPosition]}' at position ${initialPosition}`);
 
@@ -137,8 +149,9 @@ Scanner.prototype.tokenize = function(source) {
             let result = this.readString(source, position);
             position = result.position;
             tokenStream.push(tokens.stringToken(result.value));
-        } else if (specialCharacters.has(ch)) {
+        } else if (specialCharacters.has(ch) && isSpace(source[position + 1])) {
             tokenStream.push(tokens.identifierToken(ch));
+            position += 1;
         } else {
             let result = this.readNumberOrIdentifier(source, position);
             position = result.position;
@@ -149,6 +162,8 @@ Scanner.prototype.tokenize = function(source) {
             }
         }
     }
+
+    return tokenStream;
 
 
     /*

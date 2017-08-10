@@ -14,7 +14,7 @@ let execute = (input, env) => {
     return interpreter.run(ast, env);
 };
 
-describe('Invocation', () => {
+describe.skip('Invocation', () => {
     it('simple expression', () => {
         let env = Env.standard();
         let result = execute(`
@@ -24,7 +24,7 @@ describe('Invocation', () => {
     });
 });
 
-describe('Lambdas', () => {
+describe.skip('Lambdas', () => {
     it('can be defined and invoked', () => {
         let env = Env.standard();
         let lines = [

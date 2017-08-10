@@ -63,10 +63,15 @@ describe('Identifiers', () => {
 
     it('should not accept leading hyphen', runFailure('-a'));
 
-    it('should accept mixed underscore and hyphen', runTest('_a-b_c-d__ef', [
-        tokens.identifierToken('_a-b_c-d__ef')
+    it('should accept mixed underscore and hyphen', runTest('_a-bc-def', [
+        tokens.identifierToken('_a-bc-def')
     ]));
 
+    it('should not accept non-leading underscore', () => {
+        assert.throws(runTest('tst_a'),
+            UnknownSourceCharacterError);
+    });
+    
     it('should not accept leading numbers', runFailure('0ab'));
 
     it('should accept non-leading numbers', runTest('ab0', [
@@ -235,9 +240,10 @@ describe('Sub-scanning methods', () => {
                 UnknownSourceCharacterError));
         });
 
-        it('should allow one period in identifier', () => {
+        it('should disallow one period in identifier', () => {
             let input = 'fo.o test';
-            readNorI(input, 4, 'fo.o');
+            assert.throws(() => readNorI(input),
+                UnknownSourceCharacterError);
         });
 
         it('should disallow two periods in identifier', () => {
