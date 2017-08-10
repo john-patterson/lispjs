@@ -4,11 +4,10 @@ const { Interpreter } = require('../src/interpreter');
 const { Env } = require('../src/env');
 const assert = require('assert');
 
-let interpreter = new Interpreter();
-let parser = new Parser();
-let scanner = new Scanner();
-
 let execute = (input, env) => {
+    let interpreter = Interpreter();
+    let parser = new Parser();
+    let scanner = new Scanner();
     let tokenStream = scanner.tokenize(input);
     let ast = parser.parse(tokenStream);
     return interpreter.run(ast, env);

@@ -7,14 +7,14 @@ const assert = require('assert');
 describe('Simple atom', () => {
     it('should return integers', () => {
         let integer = nodes.atom(tokens.intToken(3));
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         let result = interpreter.run(integer, {});
         assert.equal(result, 3);
     });
 
     it('should lookup symbols', () => {
         let symbol = nodes.atom(tokens.identifierToken('_cow'));
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         let result = interpreter.run(symbol, {
             find: function(key) {
                 if (key === '_cow')
@@ -31,7 +31,7 @@ describe('Simple atom', () => {
             nodes.atom(tokens.intToken(1)),
             nodes.atom(tokens.intToken(2)),
         ]);
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         let result = interpreter.run(ast, {
             find: function(key) {
                 if (key === 'plus')
@@ -61,7 +61,7 @@ describe('Simple atom', () => {
         env.update({
             'cow-in-field': 2
         });
-        let result = (new Interpreter()).run(ast, env);
+        let result = Interpreter().run(ast, env);
         assert.equal(result, 34);
     });
 
@@ -75,7 +75,7 @@ describe('Define', () => {
             nodes.atom(tokens.intToken(2))
         ]);
         let env = Env.standard();
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         interpreter.run(ast, env);
         assert.equal(env.find('foo'), 2);
     });
@@ -87,7 +87,7 @@ describe('Define', () => {
             nodes.atom(tokens.identifierToken('moo'))
         ]);
         let env = Env.standard();
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         env.update({'moo': 10});
         interpreter.run(ast, env);
         env.update({'moo': 15});
@@ -101,7 +101,7 @@ describe('Define', () => {
             nodes.atom(tokens.identifierToken('moo'))
         ]);
         let env = Env.standard();
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         assert.throws(() => interpreter.run(ast, env));
     });
 });
@@ -125,7 +125,7 @@ describe('Lambda', () => {
             nodes.atom(tokens.intToken(25))
         ]);
         let env = Env.standard();
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         let result = interpreter.run(ast, env);
         assert.equal(result, 35);
     });
@@ -146,7 +146,7 @@ describe('Lambda', () => {
             nodes.atom(tokens.intToken(10)),
         ]);
         let env = Env.standard();
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         let result = interpreter.run(ast, env);
         assert.equal(result, 12);
     });
@@ -165,7 +165,7 @@ describe('Lambda', () => {
             ]),
         ]);
         let env = Env.standard();
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         let result = interpreter.run(ast, env);
         assert.equal(result, 3);
     });
@@ -191,7 +191,7 @@ describe('Conditionals', () => {
             nodes.atom(tokens.intToken(2))
         ]);
         let env = Env.standard();
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         let result = interpreter.run(ast, env);
         assert.equal(result, 1);
     });
@@ -204,7 +204,7 @@ describe('Conditionals', () => {
             nodes.atom(tokens.intToken(2))
         ]);
         let env = Env.standard();
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         let result = interpreter.run(ast, env);
         assert.equal(result, 2);
     });
@@ -216,7 +216,7 @@ describe('Conditionals', () => {
             nodes.atom(tokens.intToken(1)),
         ]);
         let env = Env.standard();
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         let result = interpreter.run(ast, env);
         assert.equal(result, undefined);
     });
@@ -237,7 +237,7 @@ describe('Conditionals', () => {
             ]),
         ]);
         let env = Env.standard();
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         interpreter.run(ast, env);
         assert.equal(env.find('a'), 1);
         assert.throws(() => env.find('b'));
@@ -259,7 +259,7 @@ describe('Conditionals', () => {
             ]),
         ]);
         let env = Env.standard();
-        let interpreter = new Interpreter();
+        let interpreter = Interpreter();
         interpreter.run(ast, env);
         assert.equal(env.find('b'), 1);
         assert.throws(() => env.find('a'));
