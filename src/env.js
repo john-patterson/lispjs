@@ -1,3 +1,10 @@
+let SymbolNotDefinedError = function (symbol) {
+    this.name = 'SymbolNotDefinedError';
+    this.message = `${this.name}: Symbol '${symbol}' is not defined.`;
+};
+
+SymbolNotDefinedError.prototype = Error.prototype;
+
 let Env = function() {
     this.data = {};
 };
@@ -21,7 +28,7 @@ Env.prototype.find = function(key) {
     if (key in this.data) {
         return this.data[key];
     }
-    throw Error(`could not find symbol ${key}`);
+    throw new SymbolNotDefinedError(key);
 };
 
 Env.standard = function() {
@@ -37,6 +44,13 @@ Env.standard = function() {
     return env;
 };
 
+let NotEnoughArgumentsError = function(expected, got) {
+    this.name = 'NotEnoughArgumentsError';
+    this.message = `${this.name}: expected ${expected} arguments, got ${got}.`;
+}
+
+NotEnoughArgumentsError.prototype = Error.prototype;
+
 let LispFunction = function(interpreter, params, body, env) {
     let _this = this;
     _this.params = params;
@@ -48,7 +62,7 @@ let LispFunction = function(interpreter, params, body, env) {
         let argsLength = args.length;
         let paramsLength = _this.params.length;
         if (argsLength != paramsLength) {
-            throw new Error(`Error, expected ${paramsLength} arguments, got ${argsLength}.`);
+            throw new NotEnoughArgumentsError(paramsLength, argsLength);
         }
 
         let paramsBindings = {};
