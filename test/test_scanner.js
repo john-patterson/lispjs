@@ -210,6 +210,11 @@ describe('Sub-scanning methods', () => {
             readNorI(input, input.length, 0.234);
         });
 
+        it('should parse negative', () => {
+            let input = '-234';
+            readNorI(input, input.length, -234);
+        });
+
         it('should parse trailing period float', () => {
             let input = '234.';
             readNorI(input, input.length, 234.0);

@@ -50,7 +50,7 @@ let Scanner = function() {
 
 
 let isSpace = (ch) => ch === ' ' || ch === '\t'
-    || ch === '\n';
+    || ch === '\n' || ch === '\r';
 
 Scanner.prototype.skipWhitespace = (source, initialPosition) => {
     let newPos = initialPosition;
@@ -86,6 +86,7 @@ Scanner.prototype.readNumberOrIdentifier = (source, initialPosition) => {
     let newPos = initialPosition;
     let firstCharacterIsNumber = '0' <= source[initialPosition]
         && source[initialPosition] <= '9';
+    let firstCharacterIsHyphen = source[initialPosition] === '-';
 
     while (newPos < source.length && !isSpace(source[newPos]) && source[newPos] !== ')') {
         let ch = source[newPos];
@@ -94,7 +95,7 @@ Scanner.prototype.readNumberOrIdentifier = (source, initialPosition) => {
                 throw new UnknownSourceCharacterError("unexpected '.' at position " + newPos);
             }
             seenPeriod = true;
-        } else if (ch < '0' || '9' < ch) {
+        } else if ((ch < '0' || '9' < ch) && ch !== '-') {
             seenNonDigitAndNonPeriod = true;
         }
 
@@ -103,7 +104,7 @@ Scanner.prototype.readNumberOrIdentifier = (source, initialPosition) => {
                 && (ch < '0' || '9' < ch)
                 && (newPos != source.length - 1 || ch !== '?')
                 && (newPos != 0 || ch !== '_')
-                && (ch !== '-' || newPos == 0)
+                && (ch !== '-')
                 && (ch !== '.')) {
             throw new UnknownSourceCharacterError(`unexpected '${ch}' at position ${newPos}`);
         }
@@ -117,6 +118,10 @@ Scanner.prototype.readNumberOrIdentifier = (source, initialPosition) => {
 
     if ((firstCharacterIsNumber && seenNonDigitAndNonPeriod)
             || (seenNonDigitAndNonPeriod && seenPeriod))
+        throw new UnknownSourceCharacterError(
+            `unexpected '${source[initialPosition]}' at position ${initialPosition}`);
+
+    if (seenNonDigitAndNonPeriod && firstCharacterIsHyphen)
         throw new UnknownSourceCharacterError(
             `unexpected '${source[initialPosition]}' at position ${initialPosition}`);
 
