@@ -12,6 +12,13 @@ describe('Simple atom', () => {
         assert.equal(result, 3);
     });
 
+    it('should return strings', () => {
+        let string = nodes.atom(tokens.stringToken('moo'));
+        let interpreter = Interpreter();
+        let result = interpreter.run(string, {});
+        assert.equal(result, 'moo');
+    });
+
     it('should lookup symbols', () => {
         let symbol = nodes.atom(tokens.identifierToken('_cow'));
         let interpreter = Interpreter();

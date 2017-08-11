@@ -42,6 +42,12 @@ describe('Atoms', () => {
         let expectedAST = identifierNodes[0];
         testAST(tokenStream, expectedAST);
     });
+
+    it('should parse string', () => {
+        let tokenStream = [ tokens.stringToken('moo') ];
+        let ast = nodes.atom(tokenStream[0]);
+        testAST(tokenStream, ast);
+    });
 });
 
 

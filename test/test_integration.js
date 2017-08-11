@@ -25,6 +25,14 @@ describe('Invocation', () => {
         `, env);
         assert.equal(result, 2);
     });
+
+    it('returning string', () => {
+        let env = Env.standard();
+        let result = execute(`
+            ((lambda () 'moo'))
+        `, env);
+        assert.equal(result, 'moo');
+    });
 });
 
 describe('Lambdas', () => {

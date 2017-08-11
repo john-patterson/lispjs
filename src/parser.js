@@ -9,6 +9,7 @@ const NodeType = {
 const nodes = {
     atom: (token) => ({
         isInt: token.type === TokenType.INT,
+        isString: token.type === TokenType.STRING,
         token: token,
         value: token.value,
         type: NodeType.ATOM
@@ -38,7 +39,8 @@ let Parser = function() {
     let self = this;
 
     let isAtomToken = (token) => {
-        return token.type === TokenType.INT || token.type === TokenType.INDENTIFIER;
+        return token.type === TokenType.INT || token.type === TokenType.INDENTIFIER 
+            || token.type === TokenType.STRING;
     };
 
     self.parse = (tokenStream) => {

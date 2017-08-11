@@ -55,9 +55,13 @@ let Interpreter = function() {
     };
 
     self.runAtom = (ast, env) => {
-        return ast.isInt
-            ? ast.value
-            : env.find(ast.value);
+        if (ast.isInt) {
+            return ast.value;
+        } else if (ast.isString) {
+            return ast.value;
+        } else {
+            return env.find(ast.value);
+        }
     };
 
     self.runList = (ast, env) => {
