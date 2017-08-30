@@ -1,5 +1,5 @@
-const { Scanner } = require('../src/scanner');
-const { Parser } = require('../src/parser');
+const { Scanner, tokens } = require('../src/scanner');
+const { Parser, nodes } = require('../src/parser');
 const { Interpreter } = require('../src/interpreter');
 const { Env, ListEmptyError, ArityMismatchError } = require('../src/env');
 const assert = require('assert');
@@ -77,6 +77,15 @@ describe('List manipulation', () => {
             assert.throws(thunk, ArityMismatchError);
         });
 
+        it('should throw arity error on 2+ args', () => {
+            let env = Env.standard();
+            let lines = [
+                '(car (1 2) (2 3))'
+            ];
+            let thunk = () => execute(lines[0], env);
+            assert.throws(thunk, ArityMismatchError);
+        });
+
         it('should throw type error non-list', () => {
             let env = Env.standard();
             let lines = [
@@ -85,5 +94,35 @@ describe('List manipulation', () => {
             let thunk = () => execute(lines[0], env);
             assert.throws(thunk, 'TypeError');
         });
+    });
+
+    const testCdrError = (input, error) => {
+        return () => {
+            let env = Env.standard();
+            let thunk = () => execute(input, env);
+            assert.throws(thunk, error);
+        };
+    };
+
+    const testCdrValid = (input, expected) => {
+        return () => {
+            let env = Env.standard();
+            let result = execute(input, env);
+            assert.equal(JSON.stringify(result), JSON.stringify(expected));
+        };
+    };
+
+    describe('cdr', () => {
+        it('should return tail', testCdrValid('(cdr (1 2 3))',
+            nodes.list([
+                nodes.atom(tokens.intToken(2)),
+                nodes.atom(tokens.intToken(3))
+            ])));
+
+        it('should return empty tail given singleton', () => {});
+        it('should throw list empty error given empty', () => {});
+        it('should throw type error given non-list', () => {});
+        it('should throw arity error given no args', () => {});
+        it('should throw arity error given 2+ args', () => {});
     });
 });

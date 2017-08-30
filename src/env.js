@@ -1,4 +1,4 @@
-const { NodeType } = require('./parser');
+const { NodeType, nodes } = require('./parser');
 
 let SymbolNotDefinedError = function (symbol) {
     this.name = 'SymbolNotDefinedError';
@@ -54,7 +54,7 @@ Env.standard = function() {
         '/': (args) => args.reduce((prev, curr) => prev / curr),
         '<': (args) => args.reduce((prev, curr) => prev < curr),
         'car': { invoke: (args) => {
-            if (args[0] == null) {
+            if (args[0] == null || args.length != 1) {
                 throw new ArityMismatchError(1, 0);
             } else if (args[0].nodes == null || args[0].nodes.length < 1) {
                 throw new ListEmptyError('car');
@@ -62,7 +62,10 @@ Env.standard = function() {
                 throw new TypeError("Expected list type to 'car', got atom.");
             }
             return args[0].nodes[0];
-        } }
+        }},
+        'cdr': { invoke: (args) => {
+            return nodes.list(args[0].nodes.slice(1));
+        }}
     });
 
     return env;
