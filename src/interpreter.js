@@ -39,7 +39,11 @@ let Interpreter = function() {
 
     self.invokeFunctionOrLambda = (f, args, env) => {
         if (f.invoke != null) {
-            return f.invoke(args);
+            let value = f.invoke(args);
+            if (value.type === NodeType.ATOM || value.type === NodeType.LIST) {
+                return self.run(value);
+            }
+            return value;
         } else {
             let newArgs = args
                 .map(arg => self.run(arg, env));

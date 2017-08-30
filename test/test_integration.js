@@ -1,7 +1,7 @@
 const { Scanner } = require('../src/scanner');
 const { Parser } = require('../src/parser');
 const { Interpreter } = require('../src/interpreter');
-const { Env } = require('../src/env');
+const { Env, ListEmptyError, ArityMismatchError } = require('../src/env');
 const assert = require('assert');
 
 let interpreter = new Interpreter();
@@ -45,5 +45,45 @@ describe('Lambdas', () => {
         execute(lines[0], env);
         let result = execute(lines[1], env);
         assert.equal(result, 24);
+    });
+});
+
+describe('List manipulation', () => {
+    describe('car', () => {
+        it('should return first item of non-empty list', () => {
+            let env = Env.standard();
+            let lines = [
+                '(car (1 2 3))'
+            ];
+            let result = execute(lines[0], env);
+            assert.equal(result, 1);
+        });
+
+        it('should throw empty list error on empty list', () => {
+            let env = Env.standard();
+            let lines = [
+                '(car ())'
+            ];
+            let thunk = () => execute(lines[0], env);
+            assert.throws(thunk, ListEmptyError);
+        });
+
+        it('should throw arity error on no args', () => {
+            let env = Env.standard();
+            let lines = [
+                '(car)'
+            ];
+            let thunk = () => execute(lines[0], env);
+            assert.throws(thunk, ArityMismatchError);
+        });
+
+        it('should throw type error non-list', () => {
+            let env = Env.standard();
+            let lines = [
+                '(car 1)'
+            ];
+            let thunk = () => execute(lines[0], env);
+            assert.throws(thunk, 'TypeError');
+        });
     });
 });
