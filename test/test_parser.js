@@ -3,7 +3,7 @@ const { NodeType, nodes, Parser } = require('../src/parser');
 const assert = require('assert');
 
 let testAST = (tokenStream, expectedAST) => {
-    let actualAST = (new Parser()).parse(tokenStream);
+    let actualAST = Parser().parse(tokenStream);
     assert.equal(JSON.stringify(actualAST),
         JSON.stringify(expectedAST));
 };

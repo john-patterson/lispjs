@@ -20,45 +20,54 @@ const nodes = {
     }),
 };
 
+let UnexpectedEOFError = function() {
+    this.name = 'UnexpectedEOFError';
+    this.message = 'Unexpected EOF while parsing.';
+};
+
+UnexpectedEOFError.prototype = Error.prototype;
+
+let UnexpectedEndOfExpression = function() {
+    this.name = 'UnexpectedEndOfExpression';
+    this.message = "Unexpected ')' found.";
+};
+
+UnexpectedEndOfExpression.prototype = Error.prototype;
+
 let Parser = function() {
-};
+    let self = this;
 
-let isAtomToken = (token) => {
-    return token.type === TokenType.INT || token.type === TokenType.INDENTIFIER;
-};
-
-Parser.prototype.parse = function(tokenStream) {
-    if (tokenStream.length == 0) {
-        throw new Error('unexpected EOF while reading');
-    }
-
-    let tokenStack = tokenStream.slice(0);
-
-    let innerParse = () => {
-        let token = tokenStack.shift();
-        if (token.type === TokenType.LBRACE) {
-            let nodeCollection = [];
-            while (tokenStack[0].type !== TokenType.RBRACE) {
-                nodeCollection.push(innerParse());
-            }
-            tokenStack.shift();
-            return nodes.list(nodeCollection);
-        } else if (token.type === TokenType.RBRACE) {
-            throw new Error("unexpected ')' found");
-        } else {
-            return nodes.atom(token);
-        }
+    let isAtomToken = (token) => {
+        return token.type === TokenType.INT || token.type === TokenType.INDENTIFIER;
     };
 
-    return innerParse();
+    self.parse = (tokenStream) => {
+        if (tokenStream.length == 0) {
+            throw new UnexpectedEOFError();
+        }
+
+        let tokenStack = tokenStream.slice(0);
+
+        let innerParse = () => {
+            let token = tokenStack.shift();
+            if (token.type === TokenType.LBRACE) {
+                let nodeCollection = [];
+                while (tokenStack[0].type !== TokenType.RBRACE) {
+                    nodeCollection.push(innerParse());
+                }
+                tokenStack.shift();
+                return nodes.list(nodeCollection);
+            } else if (token.type === TokenType.RBRACE) {
+                throw new UnexpectedEndOfExpression();
+            } else {
+                return nodes.atom(token);
+            }
+        };
+
+        return innerParse();
+    };
+
+    return self;
 };
 
 module.exports = { nodes, NodeType, Parser };
-/*
-expr := atom | ( expr . expr) | list
-list := ( expr+ )
-atom := INT | INDENTIFIER
-*/
-
-
-

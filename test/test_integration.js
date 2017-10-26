@@ -9,6 +9,9 @@ let parser = new Parser();
 let scanner = new Scanner();
 
 let execute = (input, env) => {
+    let interpreter = Interpreter();
+    let parser = Parser();
+    let scanner = new Scanner();
     let tokenStream = scanner.tokenize(input);
     let ast = parser.parse(tokenStream);
     return interpreter.run(ast, env);
